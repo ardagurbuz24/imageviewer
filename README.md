@@ -1,6 +1,9 @@
 SDL2 Image Viewer
 
 A lightweight, hardware-accelerated image viewer built with C and SDL2. This tool allows users to view images instantly by dragging and dropping files into the window.
+
+
+
 🚀 Features
 
     Hardware Acceleration: Uses GPU textures for efficient rendering.
