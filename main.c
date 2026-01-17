@@ -6,7 +6,7 @@
 int main(int argc, char* argv[]){
 
     int imgflags = IMG_INIT_JPG | IMG_INIT_PNG;
-
+    
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("sdl error: %s", SDL_GetError());
         return 1;
@@ -24,7 +24,11 @@ int main(int argc, char* argv[]){
         filePath = argv[1];
     }
 
-    SDL_Window *iwindow = SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 600, 600, 0);
+
+    int winW = 600;
+    int winH = 600;
+
+    SDL_Window *iwindow = SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, winW, winH, 0);
     SDL_Renderer *irenderer = SDL_CreateRenderer(iwindow, -1, 0);
     SDL_Surface *isurface = IMG_Load(filePath);
     SDL_Texture *itexture = SDL_CreateTextureFromSurface(irenderer, isurface);
@@ -59,7 +63,7 @@ int main(int argc, char* argv[]){
 
                     SDL_Surface* temp_surface = IMG_Load(dropped_filedir);
                 if (temp_surface == NULL) {
-                    printf("Resim yuklenemedi: %s\n", IMG_GetError());
+                    printf("Image can't loaded: %s\n", IMG_GetError());
                 } else {
                     
                     itexture = SDL_CreateTextureFromSurface(irenderer, temp_surface);
@@ -72,9 +76,28 @@ int main(int argc, char* argv[]){
         }
 
 
+        int imgW, imgH;
+        
         SDL_SetRenderDrawColor(irenderer, 0,0,0,255);
-        SDL_RenderClear (irenderer);       
-        SDL_RenderCopy(irenderer, itexture, NULL, NULL);
+        SDL_GetWindowSize(iwindow, &winW, &winH);
+        SDL_QueryTexture(itexture, NULL, NULL, &imgW, &imgH);
+        SDL_RenderClear (irenderer);
+        
+        SDL_Rect target;
+        
+        float scaleW = (float)winW / imgW;
+        float scaleH = (float)winH/ imgH;
+        float scale = (scaleW < scaleH) ? scaleW : scaleH;
+
+        target.w = (int)(imgW * scale);
+        target.h = (int)(imgH * scale);
+
+
+
+        target.x = (winW - target.w) / 2;
+        target.y = (winH - target.h) / 2;
+
+        SDL_RenderCopy(irenderer, itexture, NULL, &target);
         SDL_RenderPresent(irenderer);
     }
 
