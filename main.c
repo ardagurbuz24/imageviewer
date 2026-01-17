@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-int main(){
+int main(int argc, char* argv[]){
 
     int imgflags = IMG_INIT_JPG | IMG_INIT_PNG;
 
@@ -18,9 +18,15 @@ int main(){
         return 1;
     }
 
+    char *filePath = "Red_Kitten_01.jpg";
+
+    if (argc > 1) {
+        filePath = argv[1];
+    }
+
     SDL_Window *iwindow = SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 600, 600, 0);
     SDL_Renderer *irenderer = SDL_CreateRenderer(iwindow, -1, 0);
-    SDL_Surface *isurface = IMG_Load("Red_Kitten_01.jpg");
+    SDL_Surface *isurface = IMG_Load(filePath);
     SDL_Texture *itexture = SDL_CreateTextureFromSurface(irenderer, isurface);
     SDL_FreeSurface(isurface);
 
@@ -43,6 +49,25 @@ int main(){
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT) {
                 running = 0;
+            }
+            else if (event.type == SDL_DROPFILE) {
+                char* dropped_filedir = event.drop.file;
+
+                    if (itexture != NULL) {
+                    SDL_DestroyTexture(itexture);
+                }
+
+                    SDL_Surface* temp_surface = IMG_Load(dropped_filedir);
+                if (temp_surface == NULL) {
+                    printf("Resim yuklenemedi: %s\n", IMG_GetError());
+                } else {
+                    
+                    itexture = SDL_CreateTextureFromSurface(irenderer, temp_surface);
+                    SDL_FreeSurface(temp_surface);
+                }
+
+                
+                SDL_free(dropped_filedir);
             }
         }
 
