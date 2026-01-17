@@ -7,7 +7,7 @@ int main(){
 
     int imgflags = IMG_INIT_JPG | IMG_INIT_PNG;
 
-    if(SDL_Init(SDL_INIT_VIDEO < 0)) {
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("sdl error: %s", SDL_GetError());
         return 1;
     }
